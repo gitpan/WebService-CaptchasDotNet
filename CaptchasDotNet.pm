@@ -5,7 +5,7 @@ use warnings FATAL => qw(all);
 
 use Digest::MD5 qw(md5 md5_hex);
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 my @letters = 'a'..'z';
 
@@ -24,7 +24,7 @@ sub verify {
 
   my $self = shift;
 
-  my ($captcha, $random) = @_;
+  my ($input, $random) = @_;
 
   my $secret = $self->{_secret};
 
@@ -32,21 +32,22 @@ sub verify {
 
   return unless $secret;                    # secret required
 
-  return unless $captcha && $random;        # both are required
+  return unless $input && $random;          # both are required
 
-  return unless $captcha =~ m/^[a-z]{6}$/; # the captcha is always
+  return unless $input =~ m/^[a-z]{6}$/;    # the captcha is always
                                             # 6 lowercase letters
 
-  # now for the computation
-  my $decode = join '', $secret, $random;
+  # now for the computation - this is what
+  # the captcha image should really be
+  my $decode = substr(md5(join '', $secret, $random), 0, 6);
 
-  my $pass = '';
+  my $captcha = '';
 
-  foreach my $byte (split //, md5($decode)) {
-    $pass .= $letters[ord($byte) % 26];
+  foreach my $byte (split //, $decode) {
+    $captcha .= $letters[ord($byte) % 26];
   }
 
-  return $captcha eq substr($pass, 0, 6);
+  return $input eq $captcha;
 }
 
 sub random {
