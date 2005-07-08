@@ -4,5 +4,5 @@ Revision history for Perl extension WebService::CaptchasDotNet
 	- original version
 
 0.02  06.01.2005
-	- clean up implementation.  it should even be a bit
-          faster now
+	- clean up implementation
+        - implement file cache, per request from the captchas.net team

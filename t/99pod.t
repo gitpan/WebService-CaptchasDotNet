@@ -1,9 +1,10 @@
+use strict;
+use warnings FATAL => qw(all);
+
 use Test::More;
 
 use File::Spec;
 use File::Find qw(find);
-
-use strict;
 
 eval {
   require Test::Pod;
