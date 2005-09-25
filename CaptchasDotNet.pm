@@ -12,7 +12,7 @@ use File::Find qw(find);
 use IO::File ();
 use IO::Dir ();
 
-our $VERSION = 0.03;
+our $VERSION = 0.04;
 
 our $DEBUG = 0;
 
@@ -258,7 +258,10 @@ sub _cleanup {
 
     foreach my $entry ($dh->read) {
 
-      next if $entry =~ m!^\.!;
+      # untaint
+      ($entry) = $entry =~ m!^([0-9a-z-A-Z]{32})$!;
+
+      next unless $entry;
 
       my $file = File::Spec->catfile($dir, $entry);
 
@@ -281,6 +284,11 @@ sub _time_to_cleanup {
   my $mtime = (stat $file)[9];
 
   if ($mtime && $mtime + $self->{_expire} < time) {
+
+    print STDERR join ' ', 'WebService::CaptchasDotNet - ',
+                           "$file created at $mtime ready for cleanup\n"
+      if $DEBUG;
+
     return 1;
   }
 
@@ -481,7 +489,7 @@ if you are interested in verbose error messages when something
 doesn't go according to plan you can enable debugging as follows:
 
   use WebService::CaptchasDotNet;
-  WebService::CaptchasDotNet::DEBUG = 1;
+  $WebService::CaptchasDotNet::DEBUG = 1;
 
 =head1 SEE ALSO
 

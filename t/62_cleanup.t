@@ -13,7 +13,7 @@ my $tmpdir = My::CommonTestRoutines->tmpdir;
 local *File::Spec::tmpdir = sub { $tmpdir };
 
 
-use Test::More tests => 6;
+use Test::More tests => 9;
 
 my $class = qw(WebService::CaptchasDotNet);
 
@@ -42,6 +42,33 @@ use_ok($class);
 
   $o->_cleanup();
 
+  ok (-e $file,
+      'cache file was not removed - not a hex file');
+}
+
+{
+  no warnings qw(redefine);
+  local *Digest::MD5::hexdigest = sub { 'b77a27f12f2fb0e1b65ba560659640aa' };
+
+  # create the directory
+  my $o = $class->new(expire => 2);
+
+  my $file = File::Spec->catfile($tmpdir,
+                                 qw(CaptchasDotNet b77a27f12f2fb0e1b65ba560659640aa));
+
   ok (! -e $file,
-      'cache file was removed');
+      'cache file does not exist');
+
+  # put a known random file in it
+  my $random = $o->random;
+
+  ok (-e $file,
+      'cache file exists');
+
+  sleep 3;
+
+  $o->_cleanup();
+
+  ok (! -e $file,
+      'cache file removed');
 }

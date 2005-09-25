@@ -48,7 +48,7 @@ use_ok($class);
   my $file = $o->_verify_random_string($random);
 
   like ($file,
-        qr!$tmpdir/CaptchasDotNet/\w+!,
+        qr!^\Q$tmpdir\E.CaptchasDotNet.\w+!,
         "random string '$random' returns '$file'");
 }
 

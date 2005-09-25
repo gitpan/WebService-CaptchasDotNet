@@ -176,7 +176,7 @@ if you are interested in verbose error messages when something
 doesn't go according to plan you can enable debugging as follows:
 
   use WebService::CaptchasDotNet;
-  WebService::CaptchasDotNet::DEBUG = 1;
+  $WebService::CaptchasDotNet::DEBUG = 1;
 
 SEE ALSO
 
