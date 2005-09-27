@@ -12,7 +12,7 @@ use File::Find qw(find);
 use IO::File ();
 use IO::Dir ();
 
-our $VERSION = 0.04;
+our $VERSION = 0.05;
 
 our $DEBUG = 0;
 
@@ -209,10 +209,14 @@ sub _verify_random_string {
 
   my $random = shift;
 
+  # untaint
+  ($random) = $random =~ m!^([0-9a-z-A-Z]{32})$!
+    if $random;
+
   unless ($random) {
 
     print STDERR join ' ', 'WebService::CaptchasDotNet - ',
-                           "unable to verify null random string\n"
+                           "unable to verify invalid random string\n"
       if $DEBUG;
 
     return;
@@ -267,12 +271,15 @@ sub _cleanup {
 
       unlink $file if $self->_time_to_cleanup($file); 
     } 
+
+    return 1;
   }
-  else {
-    print STDERR join ' ', 'WebService::CaptchasDotNet - ',
-                           "cannot open cache directory $dir - $!\n"
-      if $DEBUG;
-  }
+
+  print STDERR join ' ', 'WebService::CaptchasDotNet - ',
+                         "cannot open cache directory $dir - $!\n"
+    if $DEBUG;
+
+  return;
 }
 
 sub _time_to_cleanup {

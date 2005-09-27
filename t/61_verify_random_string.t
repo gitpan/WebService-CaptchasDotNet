@@ -13,7 +13,7 @@ my $tmpdir = My::CommonTestRoutines->tmpdir;
 local *File::Spec::tmpdir = sub { $tmpdir };
 
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 my $class = qw(WebService::CaptchasDotNet);
 
@@ -36,7 +36,17 @@ use_ok($class);
   my $random = 'foobar';
 
   ok (! $o->_verify_random_string($random),
-      "random random string '$random' returns false");
+      "non-md5 random string '$random' returns false");
+}
+
+{
+  my $o = $class->new(secret   => 'secret',
+                      username => 'demo');
+
+  my $random = '2639ad44688295f36bbfe9d3e1eadc18';
+
+  ok (! $o->_verify_random_string($random),
+      "random md5 random string '$random' returns false");
 }
 
 {

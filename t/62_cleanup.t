@@ -13,7 +13,7 @@ my $tmpdir = My::CommonTestRoutines->tmpdir;
 local *File::Spec::tmpdir = sub { $tmpdir };
 
 
-use Test::More tests => 9;
+use Test::More tests => 11;
 
 my $class = qw(WebService::CaptchasDotNet);
 
@@ -71,4 +71,22 @@ use_ok($class);
 
   ok (! -e $file,
       'cache file removed');
+}
+
+{
+  my $o = $class->new(expire => 2);
+
+  chmod 0000, $tmpdir;
+
+  my $rc = $o->_cleanup();
+
+  ok (! $rc,
+      'unreadable directory returns false');
+
+  chmod 0777, $tmpdir;
+
+  $rc = $o->_cleanup();
+
+  ok ($rc,
+      'readable directory returns true');
 }
