@@ -16,6 +16,8 @@ t/60_init.t
 t/61_verify_random_string.t
 t/62_cleanup.t
 t/63_time_to_cleanup.t
+t/80cgi.t
 t/99pod.t
+t/conf/extra.conf.in
 t/lib/My/CommonTestRoutines.pm
 t/lib/My/EmptySubclass.pm

@@ -6,7 +6,9 @@ use File::Path qw(rmtree);
 
 use Test::More;
 
-my $tmpdir = File::Spec->catfile(cwd, qw(t tmp));
+my $base = $ENV{DOCUMENT_ROOT} ? cwd : File::Spec->catfile(cwd, 't');
+
+my $tmpdir = File::Spec->catfile($base, 'tmp');
 
 sub tmpdir {
   return $tmpdir;
@@ -17,7 +19,7 @@ END {
 
   ok (-e $tmpdir, "$tmpdir exists");
 
-  chdir 't';
+  chdir $base;
   rmtree 'tmp';
 
   ok (! -e $tmpdir, "$tmpdir removed");

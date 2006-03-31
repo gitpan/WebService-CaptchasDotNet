@@ -1,7 +1,6 @@
 use 5.006;
 
 use strict;
-use warnings FATAL => qw(all);
 
 use ExtUtils::MakeMaker;
 
@@ -16,6 +15,27 @@ WriteMakefile(
                            'Cwd'         => 0, },
 );
 
+use constant HAS_APACHE_TEST => eval {
+  require Apache::Test;
+  require Apache::TestMM;
+  require Apache::TestRun;
+
+  Apache::TestMM->import(qw(test clean));
+  Apache::TestMM::filter_args();
+
+  my %args = @Apache::TestMM::Argv;
+                                                                                                                           
+  die 'suitable httpd required'
+    unless ($args{apxs} or $args{httpd} or
+            $ENV{APACHE_TEST_HTTPD} or $ENV{APACHE_TEST_APXS});
+
+  Apache::TestRun->generate_script();
+                                                                                                                             
+  return Apache::TestMM->test;
+};
+
+warn $@ if $@;
+
 sub MY::test {
 
   my $test = shift->MM::test(@_);
@@ -24,6 +44,8 @@ sub MY::test {
 test::
 \t\@echo sorry, cannot run tests without Test::More
 EOF
+
+  return HAS_APACHE_TEST if HAS_APACHE_TEST;
 
   if (eval { require Devel::Cover }) {
     $test .= <<EOF;
@@ -35,4 +57,16 @@ EOF
   }
 
   return $test;
+}
+
+
+sub MY::clean {
+
+  if (HAS_APACHE_TEST) {
+      require Apache::TestMM;
+
+      return Apache::TestMM::clean(@_);
+  }
+
+  return shift->MM::clean(@_);
 }

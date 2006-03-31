@@ -12,7 +12,7 @@ use File::Find qw(find);
 use IO::File ();
 use IO::Dir ();
 
-our $VERSION = 0.05;
+our $VERSION = 0.06;
 
 our $DEBUG = 0;
 
@@ -175,7 +175,7 @@ sub url {
 
   my $user = $self->{_uid};
 
-  return "http://image.captchas.net?client=$user&amp;random=$random";
+  return "http://image.captchas.net/?client=$user&amp;random=$random";
 }
 
 

@@ -15,3 +15,6 @@ Revision history for Perl extension WebService::CaptchasDotNet
 
 0.05  09.26.2005
 	- hmph, another taint fix.  time to make a better test suite...
+
+0.06  03.30.2006
+	- test harness tweaks - nothing major

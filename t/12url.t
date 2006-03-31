@@ -29,6 +29,6 @@ use_ok($class);
   my $url = $o->url($random);
 
   is ($url,
-      'http://image.captchas.net?client=demo&amp;random=RandomZufall',
+      'http://image.captchas.net/?client=demo&amp;random=RandomZufall',
       'url() generates the proper URL');
 }
